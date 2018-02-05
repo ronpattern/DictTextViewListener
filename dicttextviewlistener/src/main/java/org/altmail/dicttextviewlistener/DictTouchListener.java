@@ -237,6 +237,7 @@ public class DictTouchListener implements View.OnTouchListener {
     }
 
     private void addPopupContent() {
+        mRoot.setPadding(0, 0, 0, mPadding);
         mPopupContent = new ScrollView(mContext);
         mPopupContent.setId(R.id.popup_content);
         mPopupContent.setPadding(mPadding, mPadding, mPadding, mPadding);
@@ -474,7 +475,6 @@ public class DictTouchListener implements View.OnTouchListener {
 
     private void displayDefinitions(DictParser dictParser)
     {
-        mRoot.setPadding(0, 0, 0, mPadding);
         final LinearLayout linearLayout = new LinearLayout(mContext);
         ScrollView.LayoutParams layoutParams = new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         linearLayout.setLayoutParams(layoutParams);
