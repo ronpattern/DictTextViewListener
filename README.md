@@ -1,7 +1,7 @@
 # DisctTextViewListener
 
 
-Long press on the word of a textview to search for its definition online
+Long press on the word of a textview to get its definition (online)
 
 
 ![picture alt](https://github.com/ronpattern/DisctTextViewListener/blob/master/screenshot/screen1.gif)
@@ -46,7 +46,7 @@ You can use a regular TextView, however if you want your text to be scrollable, 
 
 ```
 
-The Popup can be dismissed by clicking outside of it, but if you want to use the back button you will have to add these lines on your main activity :
+The Popup can be dismissed by clicking outside of it, but if you want to use the back button you will have to add these lines in your main activity :
 
 
 ```java
