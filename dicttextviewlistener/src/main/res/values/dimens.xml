@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="scroll_view_padding">16dp</dimen>
+    <dimen name="default_radius">16dp</dimen>
+    <dimen name="stroke_width">1dp</dimen>
+    <dimen name="gradient_border_height">16dp</dimen>
+</resources>

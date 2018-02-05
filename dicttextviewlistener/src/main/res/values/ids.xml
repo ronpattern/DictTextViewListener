@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="popup_content" type="id" />
+    <item name="progress_bar" type="id" />
+    <item name="gradient_border_top" type="id" />
+    <item name="gradient_border_bottom" type="id" />
+    <item name="frame_layout" type="id" />
+
+</resources>
