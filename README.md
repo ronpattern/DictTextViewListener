@@ -60,3 +60,13 @@ The Popup can be dismissed by clicking outside of it, but if you want to use the
 
 ```
 
+For the library to work, you have to add these permissions to your Manifest :
+
+
+```java
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+```
+
