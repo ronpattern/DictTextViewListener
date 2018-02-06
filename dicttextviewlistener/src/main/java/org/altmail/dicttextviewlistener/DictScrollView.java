@@ -5,8 +5,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
 
 /**
@@ -17,6 +17,7 @@ public class DictScrollView extends ScrollView {
 
 
     private boolean mScrollable = true;
+    private Handler handler;
 
     public DictScrollView(Context context) {
         super(context);
@@ -54,6 +55,14 @@ public class DictScrollView extends ScrollView {
     }
 
     @Override
+    protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
+        super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
+        if(handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
 
         return mScrollable && super.onInterceptTouchEvent(ev);
@@ -61,12 +70,7 @@ public class DictScrollView extends ScrollView {
 
     public void setHandler(final Handler handler) {
         if(handler != null) {
-            getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-                @Override
-                public void onScrollChanged() {
-                    handler.removeCallbacksAndMessages(null);
-                }
-            });
+            this.handler = handler;
         }
     }
 }

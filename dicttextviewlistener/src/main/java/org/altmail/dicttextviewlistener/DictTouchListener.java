@@ -49,8 +49,8 @@ public class DictTouchListener implements View.OnTouchListener {
 
     private static final String DEBUG_TAG = "DictTouchListener";
 
-    public static final String MESSAGE_TAG = "message";
-    public static final String RESULT_TAG = "result";
+    static final String MESSAGE_TAG = "message";
+    static final String RESULT_TAG = "result";
 
     private static final String LAST_WORD_DEFAULT_VALUE = "";
 
@@ -73,6 +73,8 @@ public class DictTouchListener implements View.OnTouchListener {
     private static final String DEFAULT_SERVER_ADDRESS = "dict.org";
 
     private static final int CURRENT_POPUP_LIST_INDEX = 0;
+
+    private static final int SCROLL_THRESHOLD = 15;
 
     private static final int SHOW_PROGRESS_EVENT_MESSAGE_ID = 0;
     private static final int DISPLAY_RESULT_EVENT_MESSAGE_ID = 1;
@@ -539,7 +541,7 @@ public class DictTouchListener implements View.OnTouchListener {
                         if(offset<mWordOffsetInterval[0] || offset>mWordOffsetInterval[1]) {
                             showProgress(motionEvent.getX(), motionEvent.getY());
                         }
-                    } else if(Math.abs(mPointerPosition.x - motionEvent.getX())>15 || Math.abs(mPointerPosition.y - motionEvent.getY())>15) {
+                    } else if(Math.abs(mPointerPosition.x - motionEvent.getX())>SCROLL_THRESHOLD || Math.abs(mPointerPosition.y - motionEvent.getY())>SCROLL_THRESHOLD) {
                         mHandler.removeCallbacksAndMessages(null);
                         mPointerPosition = null;
                     }
