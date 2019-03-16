@@ -1,11 +1,9 @@
 package org.altmail.dicttextviewlistener;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
 
@@ -31,11 +29,6 @@ public class DictScrollView extends ScrollView {
         super(context, attrs, defStyleAttr);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public DictScrollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     public void setScrollingEnabled(boolean enabled) {
         mScrollable = enabled;
     }
@@ -44,12 +37,18 @@ public class DictScrollView extends ScrollView {
         return mScrollable;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+
         switch (ev.getAction()) {
+
             case MotionEvent.ACTION_DOWN:
+
                 return mScrollable && super.onTouchEvent(ev);
+
             default:
+
                 return super.onTouchEvent(ev);
         }
     }
@@ -57,7 +56,9 @@ public class DictScrollView extends ScrollView {
     @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
         super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
-        if(handler != null) {
+
+        if (handler != null) {
+
             handler.removeCallbacksAndMessages(null);
         }
     }
@@ -69,7 +70,9 @@ public class DictScrollView extends ScrollView {
     }
 
     public void setHandler(final Handler handler) {
-        if(handler != null) {
+
+        if (handler != null) {
+
             this.handler = handler;
         }
     }

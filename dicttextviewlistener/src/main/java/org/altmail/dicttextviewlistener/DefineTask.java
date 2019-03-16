@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,8 +25,9 @@ import static org.altmail.dicttextviewlistener.DictTouchListener.RESULT_TAG;
  * Progress:
  * Result: LinkedList<String> holding lines of response.
  */
-public class DefineTask extends AsyncTask<Void, Void, LinkedList<String> >
-{
+
+public class DefineTask extends AsyncTask<Void, Void, LinkedList<String> > {
+
     private final Handler handler;
     private final String server;
     private final int port;
@@ -39,9 +39,9 @@ public class DefineTask extends AsyncTask<Void, Void, LinkedList<String> >
 
     private String message = null;
 
-    public DefineTask(Handler handler, String server, int port, LinkedList<String> commands)
-    {
+    DefineTask(Handler handler, String server, int port, LinkedList<String> commands) {
         super();
+
         this.handler = handler;
         this.server = server;
         this.port = port;
@@ -52,13 +52,14 @@ public class DefineTask extends AsyncTask<Void, Void, LinkedList<String> >
     protected void onPreExecute() {}
 
     @Override
-    protected LinkedList<String> doInBackground(Void... v)
-    {
+    protected LinkedList<String> doInBackground(Void... v) {
         // Check that there are indeed commands to be sent to a server
-        if (commands.isEmpty())
-        {
+        if (commands.isEmpty()) {
+
             message = Message.INVALID_COMMANDS;
+
             cancel(true);
+
             return null;
         }
 
@@ -67,28 +68,34 @@ public class DefineTask extends AsyncTask<Void, Void, LinkedList<String> >
             return null;
 
         // Create the socket
-        try
-        {
+        try {
+
             socket = new Socket(server, port);
-        }
-        catch (UnknownHostException e)
-        {
+
+        } catch (UnknownHostException e) {
+
             message = Message.UNKNOWN_HOST + server + ":" + port;
+
             cancel(true);
+
             return null;
-        }
-        catch (IOException e)
-        {
+
+        } catch (IOException e) {
+
             message = Message.NETWORK_ERROR;
+
             cancel(true);
+
             return null;
         }
 
         // Check that socket is connected
-        if (! socket.isConnected())
-        {
+        if (! socket.isConnected()) {
+
             message = Message.CANNOT_CONNECT + server + ":" + port;
+
             cancel(true);
+
             return null;
         }
 
@@ -96,33 +103,37 @@ public class DefineTask extends AsyncTask<Void, Void, LinkedList<String> >
         if (isCancelled())
             return null;
 
-        LinkedList<String> response = new LinkedList<String>();
-        try
-        {
+        LinkedList<String> response = new LinkedList<>();
+
+        try {
             // Create the input and output streams
             output = new PrintWriter(socket.getOutputStream(), true);
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             // Send commands to the socket
-            ListIterator<String> i = commands.listIterator();
-            while (i.hasNext())
-                output.println(i.next());
+
+            for (String command : commands) output.println(command);
 
             // Read the server response from socket
             String line;
+
             while ((line = input.readLine()) != null)
                 response.add(line);
-        }
-        catch (NullPointerException e)
-        {
+
+        } catch (NullPointerException e) {
+
             message = Message.CANNOT_CONNECT + server + ":" + port;
+
             cancel(true);
+
             return null;
-        }
-        catch (IOException e)
-        {
+
+        } catch (IOException e) {
+
             message = Message.NETWORK_ERROR;
+
             cancel(true);
+
             return null;
         }
 
@@ -131,16 +142,18 @@ public class DefineTask extends AsyncTask<Void, Void, LinkedList<String> >
             return null;
 
         // Close socket and streams
-        try
-        {
+        try {
+
             output.close();
             input.close();
             socket.close();
-        }
-        catch (IOException e)
-        {
+
+        } catch (IOException e) {
+
             message = Message.NETWORK_ERROR;
+
             cancel(true);
+
             return null;
         }
 
@@ -148,46 +161,55 @@ public class DefineTask extends AsyncTask<Void, Void, LinkedList<String> >
     }
 
     @Override
-    protected void onPostExecute(LinkedList<String> response)
-    {
+    protected void onPostExecute(LinkedList<String> response) {
+
         if (isCancelled()) {
+
             Bundle data = new Bundle();
+
             data.putString(MESSAGE_TAG, message);
+
             android.os.Message msg = android.os.Message.obtain(handler, 2);
+
             msg.setData(data);
             handler.sendMessage(msg);
-        } else {
+        }
+        else {
             //activity.displayDefinitions(new DictParser(response));
             Bundle data = new Bundle();
+
             data.putParcelable(RESULT_TAG, new ParcelableLinkedList(response));
+
             android.os.Message msg = android.os.Message.obtain(handler, 1);
+
             msg.setData(data);
             handler.sendMessage(msg);
         }
     }
 
     @Override
-    protected void onCancelled()
-    {
-        try
-        {
+    protected void onCancelled() {
+
+        try {
             // Close the streams and socket
             output.close();
             input.close();
             socket.close();
-        }
-        catch (IOException e){}
+
+        } catch (IOException ignored){}
 
         // Display error
         Bundle data = new Bundle();
+
         data.putString(MESSAGE_TAG, message);
+
         android.os.Message msg = android.os.Message.obtain(handler, 2);
         msg.setData(data);
         handler.sendMessage(msg);
     }
 
-    private static class Message
-    {
+    private static class Message {
+
         private static final String INVALID_COMMANDS		= "Invalid commands to DICT server.";
         private static final String UNKNOWN_HOST			= "Unknown server: ";
         private static final String NETWORK_ERROR			= "Network error.";

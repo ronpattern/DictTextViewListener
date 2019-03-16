@@ -14,8 +14,10 @@ public class ParcelableLinkedList implements Parcelable {
     private final LinkedList<String> linkedList;
 
     public final Creator<ParcelableLinkedList> CREATOR = new Creator<ParcelableLinkedList>() {
+
         @Override
         public ParcelableLinkedList createFromParcel(Parcel in) {
+
             return new ParcelableLinkedList(in);
         }
 
@@ -23,20 +25,22 @@ public class ParcelableLinkedList implements Parcelable {
         public ParcelableLinkedList[] newArray(int size) {
             return new ParcelableLinkedList[size];
         }
+
     };
 
-    public ParcelableLinkedList(Parcel in) {
+    private ParcelableLinkedList(Parcel in) {
         // Read size of list
-        int size = in.readInt();
+        final int size = in.readInt();
         // Read the list
-        linkedList = new LinkedList<String>();
+        linkedList = new LinkedList<>();
         for (int i = 0; i < size; i++) {
+
             linkedList.add(in.readString());
         }
 
     }
 
-    public ParcelableLinkedList(LinkedList<String> linkedList) {
+    ParcelableLinkedList(LinkedList<String> linkedList) {
         this.linkedList = linkedList;
     }
 
@@ -55,6 +59,7 @@ public class ParcelableLinkedList implements Parcelable {
         parcel.writeInt(linkedList.size());
         // Write the list
         for (String entry : linkedList) {
+
             parcel.writeString(entry);
         }
     }
