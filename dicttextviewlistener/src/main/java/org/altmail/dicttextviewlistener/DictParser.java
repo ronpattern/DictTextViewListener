@@ -173,7 +173,7 @@ public class DictParser {
                         // 151 "word" database "Database description"
                         result.add("From " + line.split(" ", 4)[3]);
 
-                        StringBuilder definition = new StringBuilder();
+                        final StringBuilder definition = new StringBuilder();
 
                         while (i.hasNext()) {
 

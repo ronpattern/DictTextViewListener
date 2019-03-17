@@ -194,6 +194,8 @@ public class DictTouchListener implements View.OnTouchListener {
 
                 if (mPopupVisible) {
 
+                    mPointerPosition = null;
+
                     expandPopup();
                 }
             }
