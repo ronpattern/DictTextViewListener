@@ -5,9 +5,14 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
@@ -47,8 +52,6 @@ import static android.view.MotionEvent.ACTION_UP;
 
 public class DictTouchListener implements View.OnTouchListener {
 
-    private static final String DEBUG_TAG = "DictTouchListener";
-
     static final String MESSAGE_TAG = "message";
     static final String RESULT_TAG = "result";
 
@@ -64,10 +67,7 @@ public class DictTouchListener implements View.OnTouchListener {
     private static final int MIN_PROGRESS_DRAWABLE_LEVEL = 0;
     private static final int MAX_PROGRESS_DRAWABLE_LEVEL = 10000;
 
-    private static final int POPUP_DISPLAY_COUNTDOWN = 400;
-
     private static final int DISPLAY_RESULT_FADE_IN_ANIMATION_TIME = 600;
-    private static final int PROGRESS_BAR_ANIMATION_TIME = 2000;
 
     private static final int POPUP_EXPANSION_ANIMATION_TIME = 300;
     private static final int DEFAULT_SOCKET_PORT = 2628;
@@ -85,7 +85,7 @@ public class DictTouchListener implements View.OnTouchListener {
     private CharSequence mLastWord;
     private View mBackgroundFilter;
     private ConstraintLayout mRoot;
-    private ScrollView mPopupContent;
+    private FrameLayout mPopupContent;
     private ProgressBar mProgressBar;
     private DefineTask mDefineTask;
 
@@ -94,12 +94,15 @@ public class DictTouchListener implements View.OnTouchListener {
 
     private final TextView mTextView;
     private final ValueAnimator mValueAnimator;
-    private final ViewGroup mContainer;
+    private ViewGroup mContainer;
     private final ArrayList<View> mPopupList;
     private final Context mContext;
 
     private final int mPadding, mGradientHeight;
-    private final boolean mIsPortraitMode, mHasLockableScrollView;
+    private final boolean mIsPortraitMode;
+    private final DictParams mDictParams;
+
+    private Boolean mHasLockableScrollView;
 
     private final Handler mHandler = new Handler(new Handler.Callback() {
 
@@ -130,7 +133,7 @@ public class DictTouchListener implements View.OnTouchListener {
 
                     final ParcelableLinkedList result = message.getData().getParcelable(RESULT_TAG);
 
-                    if (mPopupVisible && mTriggered) {
+                    if (result != null && mPopupVisible && mTriggered) {
 
                         mProgressBar.setVisibility(View.GONE);
                         displayDefinitions(new DictParser(result.getLinkedList()));
@@ -155,31 +158,20 @@ public class DictTouchListener implements View.OnTouchListener {
         }
     });
 
-    public DictTouchListener(TextView textView, ViewGroup container) {
+    DictTouchListener(final TextView textView, final DictParams dictParams) {
 
         mTextView = textView;
-        mContainer = container;
+        mDictParams = dictParams;
         mLastWord = LAST_WORD_DEFAULT_VALUE;
         mPopupList = new ArrayList<>();
-        mContext = mContainer.getContext();
+        mContext = textView.getContext();
 
-        if (mTextView.getParent() instanceof DictScrollView) {
-
-            mHasLockableScrollView = true;
-
-            ((DictScrollView)mTextView.getParent()).setHandler(mHandler);
-
-        } else {
-
-            mHasLockableScrollView = false;
-        }
-
-        mPadding = mContext.getResources().getDimensionPixelSize(R.dimen.scroll_view_padding);
+        mPadding = mContext.getResources().getDimensionPixelSize(org.altmail.dicttextviewlistener.R.dimen.scroll_view_padding);
         mIsPortraitMode = mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-        mGradientHeight = mContext.getResources().getDimensionPixelSize(R.dimen.gradient_border_height);
+        mGradientHeight = mContext.getResources().getDimensionPixelSize(org.altmail.dicttextviewlistener.R.dimen.gradient_border_height);
         mValueAnimator = ValueAnimator.ofInt(MIN_PROGRESS_DRAWABLE_LEVEL, MAX_PROGRESS_DRAWABLE_LEVEL);
 
-        mValueAnimator.setDuration(PROGRESS_BAR_ANIMATION_TIME);
+        mValueAnimator.setDuration(mDictParams.mCountdown);
         mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             @Override
@@ -228,7 +220,7 @@ public class DictTouchListener implements View.OnTouchListener {
         final int currentX = l.leftMargin;
         final int currentY = l.topMargin;
 
-        ViewCompat.setBackground(mRoot, ContextCompat.getDrawable(mContext, R.drawable.popup_window_background_full));
+        ViewCompat.setBackground(mRoot, ContextCompat.getDrawable(mContext, org.altmail.dicttextviewlistener.R.drawable.popup_window_background_full));
 
         mProgressBackground.setVisibility(View.GONE);
 
@@ -240,7 +232,7 @@ public class DictTouchListener implements View.OnTouchListener {
         mBackgroundFilter = new View(mContext);
 
         mBackgroundFilter.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mBackgroundFilter.setBackgroundColor(ContextCompat.getColor(mContext, R.color.transparent_black));
+        mBackgroundFilter.setBackgroundColor(ContextCompat.getColor(mContext, org.altmail.dicttextviewlistener.R.color.transparent_black));
         mBackgroundFilter.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -262,7 +254,8 @@ public class DictTouchListener implements View.OnTouchListener {
                 final int height = (int) (currentHeight + ((float)valueAnimator.getAnimatedValue() * (outHeight - currentHeight)));
                 final int X = (int) (currentX + ((float)valueAnimator.getAnimatedValue() * (outX - currentX)));
                 final int Y = (int) (currentY + ((float)valueAnimator.getAnimatedValue() * (outY - currentY)));
-                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)mPopupList.get(0).getLayoutParams();
+                final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)mPopupList.get(0).getLayoutParams();
+
                 layoutParams.width = width;
                 layoutParams.height = height;
 
@@ -296,27 +289,58 @@ public class DictTouchListener implements View.OnTouchListener {
 
         mRoot.setPadding(0, 0, 0, mPadding);
 
-        mPopupContent = new ScrollView(mContext);
+        if (mDictParams.mEnableTwoDimensionsScroll) {
+
+            mPopupContent = new TwoDScrollView(mContext);
+
+        } else {
+
+            mPopupContent = new ScrollView(mContext);
+        }
+
         mProgressBar = new ProgressBar(mContext);
 
         final View topGradient = new View(mContext);
         final View bottomGradient = new View(mContext);
+        final View leftGradient = new View(mContext);
+        final View rightGradient = new View(mContext);
         final FrameLayout fl = new FrameLayout(mContext);
 
-        mPopupContent.setId(R.id.popup_content);
+        mPopupContent.setId(org.altmail.dicttextviewlistener.R.id.popup_content);
         mPopupContent.setPadding(mPadding, mPadding, mPadding, mPadding);
         mPopupContent.setClipToPadding(false);
         mPopupContent.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
-        mProgressBar.setId(R.id.progress_bar);
+        mProgressBar.setId(org.altmail.dicttextviewlistener.R.id.progress_bar);
 
-        topGradient.setBackgroundResource(R.drawable.gradient_border_top);
-        bottomGradient.setBackgroundResource(R.drawable.gradient_border_bottom);
+        final int[] gradient = new int[] {mDictParams.mPrimaryColor, Color.TRANSPARENT};
+
+        final GradientDrawable topGradientDrawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradient);
+        final GradientDrawable bottomGradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, gradient);
+
+        ViewCompat.setBackground(topGradient, topGradientDrawable);
+        ViewCompat.setBackground(bottomGradient, bottomGradientDrawable);
+
         topGradient.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, mGradientHeight, Gravity.TOP));
         bottomGradient.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, mGradientHeight, Gravity.BOTTOM));
 
-        fl.setId(R.id.frame_layout);
+        fl.setId(org.altmail.dicttextviewlistener.R.id.frame_layout);
         fl.addView(topGradient);
         fl.addView(bottomGradient);
+
+        if (mDictParams.mEnableTwoDimensionsScroll) {
+
+            final GradientDrawable leftGradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradient);
+            final GradientDrawable rightGradientDrawable = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradient);
+
+            ViewCompat.setBackground(leftGradient, leftGradientDrawable);
+            ViewCompat.setBackground(rightGradient, rightGradientDrawable);
+
+            leftGradient.setLayoutParams(new FrameLayout.LayoutParams(mGradientHeight, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.START));
+            rightGradient.setLayoutParams(new FrameLayout.LayoutParams(mGradientHeight, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.END));
+
+            fl.addView(leftGradient);
+            fl.addView(rightGradient);
+        }
 
         mRoot.addView(mPopupContent);
         mRoot.addView(mProgressBar);
@@ -324,30 +348,31 @@ public class DictTouchListener implements View.OnTouchListener {
 
         final ConstraintSet constraintSet = new ConstraintSet();
 
-        constraintSet.constrainHeight(R.id.popup_content, ConstraintSet.MATCH_CONSTRAINT);
-        constraintSet.constrainWidth(R.id.popup_content, ConstraintSet.MATCH_CONSTRAINT);
-        constraintSet.constrainHeight(R.id.progress_bar, ConstraintSet.WRAP_CONTENT);
-        constraintSet.constrainWidth(R.id.progress_bar, ConstraintSet.WRAP_CONTENT);
-        constraintSet.constrainHeight(R.id.frame_layout, ConstraintSet.MATCH_CONSTRAINT);
-        constraintSet.constrainHeight(R.id.frame_layout, ConstraintSet.MATCH_CONSTRAINT);
-        constraintSet.connect(R.id.popup_content, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
-        constraintSet.connect(R.id.popup_content, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
-        constraintSet.connect(R.id.popup_content, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
-        constraintSet.connect(R.id.popup_content, ConstraintSet.TOP, R.id.word, ConstraintSet.BOTTOM, 0);
-        constraintSet.connect(R.id.frame_layout, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
-        constraintSet.connect(R.id.frame_layout, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
-        constraintSet.connect(R.id.frame_layout, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
-        constraintSet.connect(R.id.frame_layout, ConstraintSet.TOP, R.id.word, ConstraintSet.BOTTOM, 0);
-        constraintSet.connect(R.id.progress_bar, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
-        constraintSet.connect(R.id.progress_bar, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
-        constraintSet.connect(R.id.progress_bar, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
-        constraintSet.connect(R.id.progress_bar, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+        constraintSet.constrainHeight(org.altmail.dicttextviewlistener.R.id.popup_content, ConstraintSet.MATCH_CONSTRAINT);
+        constraintSet.constrainWidth(org.altmail.dicttextviewlistener.R.id.popup_content, ConstraintSet.MATCH_CONSTRAINT);
+        constraintSet.constrainHeight(org.altmail.dicttextviewlistener.R.id.progress_bar, ConstraintSet.WRAP_CONTENT);
+        constraintSet.constrainWidth(org.altmail.dicttextviewlistener.R.id.progress_bar, ConstraintSet.WRAP_CONTENT);
+        constraintSet.constrainHeight(org.altmail.dicttextviewlistener.R.id.frame_layout, ConstraintSet.MATCH_CONSTRAINT);
+        constraintSet.constrainHeight(org.altmail.dicttextviewlistener.R.id.frame_layout, ConstraintSet.MATCH_CONSTRAINT);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.popup_content, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.popup_content, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.popup_content, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.popup_content, ConstraintSet.TOP, org.altmail.dicttextviewlistener.R.id.word, ConstraintSet.BOTTOM, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.frame_layout, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.frame_layout, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.frame_layout, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.frame_layout, ConstraintSet.TOP, org.altmail.dicttextviewlistener.R.id.word, ConstraintSet.BOTTOM, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.progress_bar, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.progress_bar, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.progress_bar, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0);
+        constraintSet.connect(org.altmail.dicttextviewlistener.R.id.progress_bar, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0);
         constraintSet.applyTo(mRoot);
 
         doLookup();
     }
 
     private void showProgress(float x, float y) {
+
         final CharSequence text = mTextView.getText();
 
         int offset = mTextView.getOffsetForPosition(x, y);
@@ -404,7 +429,7 @@ public class DictTouchListener implements View.OnTouchListener {
 
             if (right <= text.length() - 1) {
 
-                CharSequence word = text.subSequence(left, right);
+                final CharSequence word = text.subSequence(left, right);
 
                 if (word.length() > 1) {
 
@@ -413,18 +438,20 @@ public class DictTouchListener implements View.OnTouchListener {
                         if (mPopupVisible) {
 
                             removePopup();
+
                             mPointerPosition = new PointF(x, y);
                         }
 
                         mLastWord = word;
-                        mWordOffsetInterval = new int[]{left, right};
+                        mWordOffsetInterval = new int[] {left, right};
                         final Rect rect = getCoordinates(left, right);
-                        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-                        View v = layoutInflater.inflate(R.layout.popup_window_layout, null);
-                        mProgressBackground = v.findViewById(R.id.img);
-                        mRoot = v.findViewById(R.id.root);
-                        TextView textView = v.findViewById(R.id.word);
+                        final LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+                        final View v = layoutInflater.inflate(org.altmail.dicttextviewlistener.R.layout.popup_window_layout, null);
+                        mProgressBackground = v.findViewById(org.altmail.dicttextviewlistener.R.id.img);
+                        mRoot = v.findViewById(org.altmail.dicttextviewlistener.R.id.root);
+                        final TextView textView = v.findViewById(org.altmail.dicttextviewlistener.R.id.word);
 
+                        mProgressBackground.setImageDrawable(createDrawable());
                         textView.setText(word);
                         v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
@@ -442,11 +469,19 @@ public class DictTouchListener implements View.OnTouchListener {
                             outLeft = rect.left + ((rect.width() - width) / 2);
                         }
 
-                        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        final FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT);
+
                         layoutParams.setMargins(outLeft, rect.top - (int) mTextView.getTextSize() - height, 0, 0);
                         v.setLayoutParams(layoutParams);
 
-                        Animation fadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+                        final Animation fadeIn = AnimationUtils.loadAnimation(mContext, org.altmail.dicttextviewlistener.R.anim.fade_in);
+
+                        if (mContainer == null) {
+
+                            mContainer = mTextView.getRootView().findViewById(android.R.id.content);
+                        }
 
                         mContainer.addView(v);
                         v.startAnimation(fadeIn);
@@ -457,6 +492,15 @@ public class DictTouchListener implements View.OnTouchListener {
                 }
             }
         }
+    }
+
+    private Drawable createDrawable() {
+
+        final PopupDrawable backgroundDrawable = new PopupDrawable(mDictParams, true);
+
+        final ClipDrawable clipDrawable = new ClipDrawable(new PopupDrawable(mDictParams, false), Gravity.START, ClipDrawable.HORIZONTAL);
+
+        return new LayerDrawable(new Drawable[] {backgroundDrawable, clipDrawable});
     }
 
     // case with space or comma, point ...
@@ -575,7 +619,7 @@ public class DictTouchListener implements View.OnTouchListener {
         final View v = mPopupList.get(CURRENT_POPUP_LIST_INDEX);
         mLastWord = LAST_WORD_DEFAULT_VALUE;
 
-        final Animation fadeOut = AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
+        final Animation fadeOut = AnimationUtils.loadAnimation(mContext, org.altmail.dicttextviewlistener.R.anim.fade_out);
 
         fadeOut.setAnimationListener(new Animation.AnimationListener() {
 
@@ -627,6 +671,7 @@ public class DictTouchListener implements View.OnTouchListener {
 
             final TextView dictionaryView = new TextView(mContext);
 
+            dictionaryView.setHorizontallyScrolling(true);
             dictionaryView.setLayoutParams(lp);
             dictionaryView.setText(dictionary);
             linearLayout.addView(dictionaryView);
@@ -634,13 +679,14 @@ public class DictTouchListener implements View.OnTouchListener {
             if (i.hasNext()) {
 
                 final TextView definitionView = new TextView(mContext);
+                definitionView.setHorizontallyScrolling(true);
                 definitionView.setLayoutParams(lp);
                 definitionView.setText(i.next());
                 linearLayout.addView(definitionView);
             }
         }
 
-        final Animation fadeIn = AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+        final Animation fadeIn = AnimationUtils.loadAnimation(mContext, org.altmail.dicttextviewlistener.R.anim.fade_in);
 
         fadeIn.setDuration(DISPLAY_RESULT_FADE_IN_ANIMATION_TIME);
         fadeIn.setAnimationListener(new Animation.AnimationListener() {
@@ -665,7 +711,9 @@ public class DictTouchListener implements View.OnTouchListener {
     private void displayError(String message) {
 
         final TextView textView = new TextView(mContext);
-        final ScrollView.LayoutParams layoutParams = new ScrollView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+        final ScrollView.LayoutParams layoutParams = new ScrollView.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
 
         textView.setLayoutParams(layoutParams);
         mPopupContent.addView(textView);
@@ -680,9 +728,23 @@ public class DictTouchListener implements View.OnTouchListener {
 
             case ACTION_DOWN :
 
+                if (mHasLockableScrollView == null) {
+
+                    if (mTextView.getParent() instanceof DictScrollView) {
+
+                        mHasLockableScrollView = Boolean.TRUE;
+
+                        ((DictScrollView)mTextView.getParent()).setHandler(mHandler);
+
+                    } else {
+
+                        mHasLockableScrollView = Boolean.FALSE;
+                    }
+                }
+
                 mPointerPosition = new PointF(motionEvent.getX(), motionEvent.getY());
 
-                mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS_EVENT_MESSAGE_ID, POPUP_DISPLAY_COUNTDOWN);
+                mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS_EVENT_MESSAGE_ID, mDictParams.mLongPressCountdown);
 
                 break;
 
@@ -694,14 +756,15 @@ public class DictTouchListener implements View.OnTouchListener {
 
                         int offset = mTextView.getOffsetForPosition(motionEvent.getX(), motionEvent.getY());
 
-                        if (offset<mWordOffsetInterval[0] || offset>mWordOffsetInterval[1]) {
+                        if (offset < mWordOffsetInterval[0] || offset > mWordOffsetInterval[1]) {
 
                             showProgress(motionEvent.getX(), motionEvent.getY());
                         }
 
-                    } else if (Math.abs(mPointerPosition.x - motionEvent.getX())>SCROLL_THRESHOLD || Math.abs(mPointerPosition.y - motionEvent.getY())>SCROLL_THRESHOLD) {
+                    } else if (Math.abs(mPointerPosition.x - motionEvent.getX()) > SCROLL_THRESHOLD
+                            || Math.abs(mPointerPosition.y - motionEvent.getY()) > SCROLL_THRESHOLD) {
 
-                        mHandler.removeCallbacksAndMessages(null);
+                        mHandler.removeMessages(SHOW_PROGRESS_EVENT_MESSAGE_ID);
                         mPointerPosition = null;
                     }
                 }
@@ -710,7 +773,7 @@ public class DictTouchListener implements View.OnTouchListener {
 
             case ACTION_UP :
 
-                mHandler.removeCallbacksAndMessages(null);
+                mHandler.removeMessages(SHOW_PROGRESS_EVENT_MESSAGE_ID);
 
                 if (mPointerPosition != null) {
 
@@ -733,7 +796,7 @@ public class DictTouchListener implements View.OnTouchListener {
         return true;
     }
 
-    public boolean dismissPopup() {
+    boolean dismissPopup() {
 
         if (mPopupVisible && mTriggered) {
 

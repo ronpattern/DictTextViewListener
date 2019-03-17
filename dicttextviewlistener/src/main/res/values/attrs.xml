@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="DictTextView">
+
+        <attr name="lookUpCountdown" format="integer"/>
+
+        <attr name="longPressCountdown" format="integer"/>
+
+        <attr name="accentColor" format="color"/>
+
+        <attr name="backgroundColor" format="color"/>
+
+        <attr name="primaryColor" format="color"/>
+
+        <attr name="titleTextColor" format="color"/>
+
+        <attr name="bodyTextColor" format="color"/>
+
+        <attr name="strokeWidth" format="dimension"/>
+
+        <attr name="cornerRadius" format="dimension"/>
+
+        <attr name="enableTwoDimensionsScroll" format="boolean"/>
+
+    </declare-styleable>
+
+</resources>

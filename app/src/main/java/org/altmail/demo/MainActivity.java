@@ -2,28 +2,27 @@ package org.altmail.demo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import org.altmail.dicttextviewlistener.DictTouchListener;
+import org.altmail.dicttextviewlistener.DictTextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mTextView;
-    private DictTouchListener mTouchListener;
+    private DictTextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        mTextView = (TextView) findViewById(R.id.text);
-        mTouchListener = new DictTouchListener(mTextView, (ViewGroup) findViewById(android.R.id.content));
-        mTextView.setOnTouchListener(mTouchListener);
+
+        mTextView = findViewById(R.id.text);
     }
 
     @Override
     public void onBackPressed() {
-        if(!mTouchListener.dismissPopup()) {
+
+        if(!mTextView.dismissPopup()) {
+
             this.finish();
         }
     }

@@ -30,6 +30,7 @@ public class DictScrollView extends ScrollView {
     }
 
     public void setScrollingEnabled(boolean enabled) {
+
         mScrollable = enabled;
     }
 

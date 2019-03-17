@@ -4,18 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.altmail.demo.MainActivity">
-<org.altmail.dicttextviewlistener.DictScrollView
-    android:padding="16dp"
-    android:scrollbarStyle="outsideOverlay"
-    android:clipToPadding="false"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:textSize="16sp"
-        android:id="@+id/text"
+
+    <org.altmail.dicttextviewlistener.DictScrollView
+        android:padding="16dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/text" />
-</org.altmail.dicttextviewlistener.DictScrollView>
+        android:layout_height="match_parent">
+
+        <org.altmail.dicttextviewlistener.DictTextView
+            android:textSize="16sp"
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text" />
+
+    </org.altmail.dicttextviewlistener.DictScrollView>
 
 </FrameLayout>
