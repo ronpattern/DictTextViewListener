@@ -12,7 +12,7 @@ Long press on the word of a textview to get its definition (online)
 
 ## Usage
 
-You can use a regular TextView, however if you want your text to be scrollable, you will have to encapsulate it in a DictScrollView :
+If you want your text to be scrollable, you will have to encapsulate it in a DictScrollView :
 
 ```xml
 <org.altmail.dicttextviewlistener.DictScrollView
@@ -21,12 +21,23 @@ You can use a regular TextView, however if you want your text to be scrollable, 
     android:clipToPadding="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
+ 
+    <org.altmail.dicttextviewlistener.DictTextView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:textSize="16sp"
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text" />
+        android:text="@string/text"
+        app:accentColor="@color/colorAccent"
+        app:backgroundColor="@color/white"
+        app:titleTextColor="@color/transparent_black"
+        app:bodyTextColor="@color/dark_secondary_text_color"
+        app:primaryColor="@color/colorPrimary"
+        app:longPressCountdown="@integer/defaultLongPressCountdown"
+        app:lookUpCountdown="@integer/defaultLookupCountdown"
+        app:enableTwoDimensionsScroll="true" />
+    
 </org.altmail.dicttextviewlistener.DictScrollView>
 ```  
 
@@ -53,12 +64,28 @@ The Popup can be dismissed by clicking outside of it, but if you want to use the
 
     @Override
     public void onBackPressed() {
-        if(!myDictTouchListener.dismissPopup()) {
+        if(!mDictTextView.dismissPopup()) {
             this.finish();
         }
     }
 
 ```
+
+### Attribute description
+
+
+**accentColor :** color of the circular progress bar
+
+**primaryColor :** color of the popup
+
+**backgroundColor :** background color of the progress bar
+
+**titleTextColor :** title color
+
+**bodyTextColor :** regular text color
+
+**enableTwoDimensionsScroll :** scroll horizontally and vertically, prevent TextView line-break
+
 
 For the library to work, you have to add these permissions to your Manifest :
 
