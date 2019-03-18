@@ -4,9 +4,9 @@
 
     <style name="DictTextView">
 
-        <item name="lookUpCountdown">2000</item>
+        <item name="lookUpCountdown">@integer/defaultLookupCountdown</item>
 
-        <item name="longPressCountdown">400</item>
+        <item name="longPressCountdown">@integer/defaultLongPressCountdown</item>
 
         <item name="accentColor">@color/colorAccent</item>
 
@@ -16,7 +16,7 @@
 
         <item name="titleTextColor">@color/transparent_black</item>
 
-        <item name="bodyTextColor">@color/white</item>
+        <item name="bodyTextColor">@color/dark_secondary_text_color</item>
 
         <item name="strokeWidth">@dimen/stroke_width</item>
 

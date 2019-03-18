@@ -33,6 +33,7 @@ public class ParcelableLinkedList implements Parcelable {
         final int size = in.readInt();
         // Read the list
         linkedList = new LinkedList<>();
+
         for (int i = 0; i < size; i++) {
 
             linkedList.add(in.readString());

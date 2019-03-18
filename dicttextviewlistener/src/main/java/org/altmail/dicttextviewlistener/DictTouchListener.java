@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ClipDrawable;
@@ -222,7 +223,7 @@ public class DictTouchListener implements View.OnTouchListener {
         final int currentX = l.leftMargin;
         final int currentY = l.topMargin;
 
-        ViewCompat.setBackground(mRoot, ContextCompat.getDrawable(mContext, org.altmail.dicttextviewlistener.R.drawable.popup_window_background_full));
+        ViewCompat.setBackground(mRoot, new RoundedCornerDrawable(mDictParams.mCornerRadius, mDictParams.mPrimaryColor));
 
         mProgressBackground.setVisibility(View.GONE);
 
@@ -300,12 +301,15 @@ public class DictTouchListener implements View.OnTouchListener {
             mPopupContent = new ScrollView(mContext);
         }
 
+        mPopupContent.setOverScrollMode(View.OVER_SCROLL_NEVER);
+
         mProgressBar = new ProgressBar(mContext);
+
+        mProgressBar.getIndeterminateDrawable().setColorFilter(mDictParams.mAccentColor, PorterDuff.Mode.MULTIPLY);
 
         final View topGradient = new View(mContext);
         final View bottomGradient = new View(mContext);
-        final View leftGradient = new View(mContext);
-        final View rightGradient = new View(mContext);
+
         final FrameLayout fl = new FrameLayout(mContext);
 
         mPopupContent.setId(org.altmail.dicttextviewlistener.R.id.popup_content);
@@ -330,6 +334,9 @@ public class DictTouchListener implements View.OnTouchListener {
         fl.addView(bottomGradient);
 
         if (mDictParams.mEnableTwoDimensionsScroll) {
+
+            final View leftGradient = new View(mContext);
+            final View rightGradient = new View(mContext);
 
             final GradientDrawable leftGradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradient);
             final GradientDrawable rightGradientDrawable = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradient);
@@ -455,6 +462,7 @@ public class DictTouchListener implements View.OnTouchListener {
 
                         mProgressBackground.setImageDrawable(createDrawable());
                         textView.setText(word);
+                        textView.setTextColor(mDictParams.mTitleTextColor);
                         v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 
@@ -674,6 +682,7 @@ public class DictTouchListener implements View.OnTouchListener {
             final TextView dictionaryView = new TextView(mContext);
 
             dictionaryView.setHorizontallyScrolling(true);
+            dictionaryView.setTextColor(mDictParams.mBodyTextColor);
             dictionaryView.setLayoutParams(lp);
             dictionaryView.setText(dictionary);
             linearLayout.addView(dictionaryView);
@@ -681,7 +690,7 @@ public class DictTouchListener implements View.OnTouchListener {
             if (i.hasNext()) {
 
                 final TextView definitionView = new TextView(mContext);
-                definitionView.setHorizontallyScrolling(true);
+                definitionView.setTextColor(mDictParams.mBodyTextColor);
                 definitionView.setLayoutParams(lp);
                 definitionView.setText(i.next());
                 linearLayout.addView(definitionView);
