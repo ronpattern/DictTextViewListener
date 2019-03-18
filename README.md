@@ -41,22 +41,6 @@ If you want your text to be scrollable, you will have to encapsulate it in a Dic
 </org.altmail.dicttextviewlistener.DictScrollView>
 ```  
 
-**In main Activy or Fragment :**  
-
-
-```java
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        TextView textView = (TextView) findViewById(R.id.text);
-        DictTouchListener touchListener = new DictTouchListener(textView, (ViewGroup) findViewById(android.R.id.content));
-        textView.setOnTouchListener(touchListener);
-    }
-
-```
-
 The Popup can be dismissed by clicking outside of it, but if you want to use the back button you will have to add these lines in your main activity :
 
 
@@ -85,15 +69,4 @@ The Popup can be dismissed by clicking outside of it, but if you want to use the
 **bodyTextColor :** regular text color
 
 **enableTwoDimensionsScroll :** scroll horizontally and vertically, prevent TextView line-break
-
-
-For the library to work, you have to add these permissions to your Manifest :
-
-
-```java
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-
-```
 
