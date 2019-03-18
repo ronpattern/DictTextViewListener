@@ -7,21 +7,21 @@
 
         <attr name="longPressCountdown" format="integer"/>
 
-        <attr name="accentColor" format="color"/>
+        <attr name="popupAccentColor" format="color"/>
 
-        <attr name="backgroundColor" format="color"/>
+        <attr name="popupBackgroundColor" format="color"/>
 
-        <attr name="primaryColor" format="color"/>
+        <attr name="popupPrimaryColor" format="color"/>
 
-        <attr name="titleTextColor" format="color"/>
+        <attr name="popupTitleColor" format="color"/>
 
-        <attr name="bodyTextColor" format="color"/>
+        <attr name="popupBodyTextColor" format="color"/>
 
-        <attr name="strokeWidth" format="dimension"/>
+        <attr name="popupStrokeWidth" format="dimension"/>
 
-        <attr name="cornerRadius" format="dimension"/>
+        <attr name="popupCornerRadius" format="dimension"/>
 
-        <attr name="enableTwoDimensionsScroll" format="boolean"/>
+        <attr name="enablePopupTwoDimensionsScroll" format="boolean"/>
 
     </declare-styleable>
 

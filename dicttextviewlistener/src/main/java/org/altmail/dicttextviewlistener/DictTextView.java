@@ -23,18 +23,18 @@ public class DictTextView extends android.support.v7.widget.AppCompatTextView {
 
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, org.altmail.dicttextviewlistener.R.styleable.DictTextView, defStyleAttr, org.altmail.dicttextviewlistener.R.style.DictTextView);
 
-        final int accentColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_accentColor, 0);
-        final int bodyTextColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_bodyTextColor, 0);
+        final int accentColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_popupAccentColor, 0);
+        final int bodyTextColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_popupBodyTextColor, 0);
         final int countdown = typedArray.getInteger(org.altmail.dicttextviewlistener.R.styleable.DictTextView_lookUpCountdown, 0);
         final int longPressCountdown = typedArray.getInteger(org.altmail.dicttextviewlistener.R.styleable.DictTextView_longPressCountdown, 0);
-        final int primaryColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_primaryColor, 0);
-        final int titleTextColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_titleTextColor, 0);
-        final int backgroundColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_backgroundColor, 0);
+        final int primaryColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_popupPrimaryColor, 0);
+        final int titleTextColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_popupTitleColor, 0);
+        final int backgroundColor = typedArray.getColor(org.altmail.dicttextviewlistener.R.styleable.DictTextView_popupBackgroundColor, 0);
 
-        final float cornerRadius = typedArray.getDimension(org.altmail.dicttextviewlistener.R.styleable.DictTextView_cornerRadius, 0f);
-        final float strokeWidth = typedArray.getDimension(org.altmail.dicttextviewlistener.R.styleable.DictTextView_strokeWidth, 0f);
+        final float cornerRadius = typedArray.getDimension(org.altmail.dicttextviewlistener.R.styleable.DictTextView_popupCornerRadius, 0f);
+        final float strokeWidth = typedArray.getDimension(org.altmail.dicttextviewlistener.R.styleable.DictTextView_popupStrokeWidth, 0f);
 
-        final boolean enableTwoDimensionsScroll = typedArray.getBoolean(R.styleable.DictTextView_enableTwoDimensionsScroll, true);
+        final boolean enableTwoDimensionsScroll = typedArray.getBoolean(R.styleable.DictTextView_enablePopupTwoDimensionsScroll, true);
 
         typedArray.recycle();
 

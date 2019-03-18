@@ -8,21 +8,21 @@
 
         <item name="longPressCountdown">@integer/defaultLongPressCountdown</item>
 
-        <item name="accentColor">@color/colorAccent</item>
+        <item name="popupAccentColor">@color/colorAccent</item>
 
-        <item name="backgroundColor">@color/white</item>
+        <item name="popupBackgroundColor">@color/white</item>
 
-        <item name="primaryColor">@color/colorPrimary</item>
+        <item name="popupPrimaryColor">@color/colorPrimary</item>
 
-        <item name="titleTextColor">@color/transparent_black</item>
+        <item name="popupTitleColor">@color/transparent_black</item>
 
-        <item name="bodyTextColor">@color/dark_secondary_text_color</item>
+        <item name="popupBodyTextColor">@color/dark_secondary_text_color</item>
 
-        <item name="strokeWidth">@dimen/stroke_width</item>
+        <item name="popupStrokeWidth">@dimen/stroke_width</item>
 
-        <item name="cornerRadius">@dimen/default_radius</item>
+        <item name="popupCornerRadius">@dimen/default_radius</item>
 
-        <item name="enableTwoDimensionsScroll">true</item>
+        <item name="enablePopupTwoDimensionsScroll">true</item>
 
     </style>
 
