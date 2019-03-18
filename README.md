@@ -12,7 +12,7 @@ Long press on the word of a textview to get its definition (online)
 
 ## Usage
 
-You can use a regular TextView, however if you want your text to be scrollable, you will have to encapsulate it in a DictScrollView :
+If you want your text to be scrollable, you will have to encapsulate it in a DictScrollView :
 
 ```xml
 <org.altmail.dicttextviewlistener.DictScrollView
@@ -21,30 +21,25 @@ You can use a regular TextView, however if you want your text to be scrollable, 
     android:clipToPadding="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
+ 
+    <org.altmail.dicttextviewlistener.DictTextView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:textSize="16sp"
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text" />
+        android:text="@string/text"
+        app:accentColor="@color/colorAccent"
+        app:backgroundColor="@color/white"
+        app:titleTextColor="@color/transparent_black"
+        app:bodyTextColor="@color/dark_secondary_text_color"
+        app:primaryColor="@color/colorPrimary"
+        app:longPressCountdown="@integer/defaultLongPressCountdown"
+        app:lookUpCountdown="@integer/defaultLookupCountdown"
+        app:enableTwoDimensionsScroll="true" />
+    
 </org.altmail.dicttextviewlistener.DictScrollView>
 ```  
-
-**In main Activy or Fragment :**  
-
-
-```java
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        TextView textView = (TextView) findViewById(R.id.text);
-        DictTouchListener touchListener = new DictTouchListener(textView, (ViewGroup) findViewById(android.R.id.content));
-        textView.setOnTouchListener(touchListener);
-    }
-
-```
 
 The Popup can be dismissed by clicking outside of it, but if you want to use the back button you will have to add these lines in your main activity :
 
@@ -53,20 +48,25 @@ The Popup can be dismissed by clicking outside of it, but if you want to use the
 
     @Override
     public void onBackPressed() {
-        if(!myDictTouchListener.dismissPopup()) {
+        if(!mDictTextView.dismissPopup()) {
             this.finish();
         }
     }
 
 ```
 
-For the library to work, you have to add these permissions to your Manifest :
+### Attribute description
 
 
-```java
+**accentColor :** color of the circular progress bar
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+**primaryColor :** color of the popup
 
-```
+**backgroundColor :** background color of the progress bar
+
+**titleTextColor :** title color
+
+**bodyTextColor :** regular text color
+
+**enableTwoDimensionsScroll :** scroll horizontally and vertically, prevent TextView line-break
 
