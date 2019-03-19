@@ -29,14 +29,14 @@ If you want your text to be scrollable, you will have to encapsulate it in a Dic
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/text"
-        app:accentColor="@color/colorAccent"
-        app:backgroundColor="@color/white"
-        app:titleTextColor="@color/transparent_black"
-        app:bodyTextColor="@color/dark_secondary_text_color"
-        app:primaryColor="@color/colorPrimary"
+        app:popupAccentColor="@color/colorAccent"
+        app:popupBackgroundColor="@color/white"
+        app:popupTitleColor="@color/transparent_black"
+        app:popupBodyTextColor="@color/dark_secondary_text_color"
+        app:popupPrimaryColor="@color/colorPrimary"
         app:longPressCountdown="@integer/defaultLongPressCountdown"
         app:lookUpCountdown="@integer/defaultLookupCountdown"
-        app:enableTwoDimensionsScroll="true" />
+        app:enablePopupTwoDimensionsScroll="true"/>
     
 </org.altmail.dicttextviewlistener.DictScrollView>
 ```  
@@ -58,15 +58,15 @@ The Popup can be dismissed by clicking outside of it, but if you want to use the
 ### Attribute description
 
 
-**accentColor :** color of the circular progress bar
+**popupAccentColor :** color of the circular progress bar
 
-**primaryColor :** color of the popup
+**popupPrimaryColor :** color of the popup
 
-**backgroundColor :** background color of the progress bar
+**popupBackgroundColor :** background color of the progress bar
 
-**titleTextColor :** title color
+**popupTitleColor :** title color
 
-**bodyTextColor :** regular text color
+**popupBodyTextColor :** regular text color
 
 **enableTwoDimensionsScroll :** scroll horizontally and vertically, prevent TextView line-break
 
