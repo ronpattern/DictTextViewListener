@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 ext {
-    PUBLISH_GROUP_ID = 'org.altmail.dicttextviewlistener'
+    PUBLISH_GROUP_ID = 'org.altmail'
     PUBLISH_ARTIFACT_ID = 'dicttextviewlistener'
     PUBLISH_VERSION = '1.1'
 }

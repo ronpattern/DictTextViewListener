@@ -4,10 +4,10 @@
 Long press on the word of a textview to get its definition (online)
 
 
-![picture alt](https://github.com/ronpattern/DisctTextViewListener/blob/master/screenshot/screen1.gif)
+![picture alt](https://github.com/ronpattern/DisctTextViewListener/blob/master/screenshot/screen_1.gif)
 
 
-![picture alt](https://github.com/ronpattern/DisctTextViewListener/blob/master/screenshot/screen2.gif)
+![picture alt](https://github.com/ronpattern/DisctTextViewListener/blob/master/screenshot/screen_2.gif)
 
 
 ## Usage
