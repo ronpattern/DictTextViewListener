@@ -10,7 +10,21 @@ Long press on the word of a textview to get its definition (online)
 ![picture alt](https://github.com/ronpattern/DisctTextViewListener/blob/master/screenshot/screen_2.gif)
 
 
+## Download
+
+
+Include the following dependency in your build.gradle file :
+
+```java
+dependencies {
+    ...
+    implementation 'org.altmail:dicttextviewlistener:1.4'
+}
+```
+
+
 ## Usage
+
 
 If you want your text to be scrollable, you will have to encapsulate it in a DictScrollView :
 
@@ -43,7 +57,6 @@ If you want your text to be scrollable, you will have to encapsulate it in a Dic
 
 The Popup can be dismissed by clicking outside of it, but if you want to use the back button you will have to add these lines in your main activity :
 
-
 ```java
 
     @Override
@@ -55,6 +68,7 @@ The Popup can be dismissed by clicking outside of it, but if you want to use the
 
 ```
 
+
 ### Attribute description
 
 
@@ -64,9 +78,14 @@ The Popup can be dismissed by clicking outside of it, but if you want to use the
 
 **popupBackgroundColor :** background color of the progress bar
 
-**popupTitleColor :** title color
+**popupTitleColor :** popup title color
 
-**popupBodyTextColor :** regular text color
+**popupBodyTextColor :** regular popup text color
 
-**enableTwoDimensionsScroll :** scroll horizontally and vertically, prevent TextView line-break
+**enableTwoDimensionsScroll :** scroll horizontally and vertically, prevent TextView line-break (default value : true)
 
+**longPressCountdown :** long press countdown in milliseconds (default value : 400)
+
+**lookUpCountdown :** lookup press countdown in milliseconds (default value : 2000)
+
+**popupStrokeWidth :** popup stroke width (default value : 1dp)
